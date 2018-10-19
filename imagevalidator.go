@@ -1,11 +1,9 @@
-package main
+package imagevalidator
 
 import (
-	"bufio"
-	"bytes"
 	"fmt"
-	"io/ioutil"
-	"log"
+	"github.com/henrymxu/imagevalidator/utils/cmd"
+	"github.com/henrymxu/imagevalidator/utils/storage"
 	"os/exec"
 	"strings"
 )
@@ -19,7 +17,7 @@ func New(darknetpath string) imagevalidator {
 }
 
 func (imgvld imagevalidator) ValidateImages(imgfolder string, imgformat string) {
-	buffer := getImageListAsByteBuffer(imgfolder, imgformat)
+	buffer := storage.GetImageListAsByteBuffer(imgfolder, imgformat)
 	darknet := exec.Command("./darknet",
 		strings.Fields(fmt.Sprintf("validate cfg/yolov3.cfg cfg/yolov3.weights %s/results.json", imgfolder))...)
 	darknet.Dir = imgvld.darknetpath
@@ -27,31 +25,6 @@ func (imgvld imagevalidator) ValidateImages(imgfolder string, imgformat string) 
 	darknet.Stdin = &buffer
 
 	darknet.Start()
-
-	scanner := bufio.NewScanner(out)
-	scanner.Split(bufio.ScanLines)
-	for scanner.Scan() {
-		m := scanner.Text()
-		fmt.Println(m)
-	}
-
+	cmd.DisplayCommandProgress(out)
 	darknet.Wait()
-}
-
-func getImageListAsByteBuffer(imgfolder string, imgformat string) bytes.Buffer {
-	buffer := bytes.Buffer{}
-	files, err := ioutil.ReadDir(imgfolder)
-	handleError(err)
-	for _, f := range files {
-		if strings.Contains(f.Name(), imgformat) {
-			buffer.WriteString(fmt.Sprintf("%s/%s\n", imgfolder, f.Name()))
-		}
-	}
-	return buffer
-}
-
-func handleError(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
 }
