@@ -7,6 +7,6 @@ import (
 
 func main() {
 	params := utils.GetInitialParams()
-	validator := imagevalidator.New(params.DarknetPath)
-	validator.ValidateImages(params.Folder, params.ImageFormat, params.Overwrite)
+	validator := imagevalidator.New(utils.ParsePath(params.DarknetPath))
+	validator.ValidateImages(utils.ParsePath(params.Folder), params.ImageFormat, params.Overwrite)
 }

@@ -1,18 +1,14 @@
 # Image Validator
 
-Program to validate images by comparing result of YoloV3 classifier to desired classes.
+Program to validate images by comparing result of YoloV3 (darknet) classifier to desired classes.
 
-# Example usage
+# Requirements
 
-See `_examples/main.go`
+- Forked version of darknet that will produce json results from image classification
 
 # Example command line usage
 
-// TODO implement this
-
-# Config
-
-// TODO setup config
+`./imagevalidator -darknet ~/darknet -folder ~/ImageSet/corvette`
 
 # License
 

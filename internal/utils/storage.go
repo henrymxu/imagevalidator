@@ -6,8 +6,16 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/user"
 	"strings"
 )
+
+func ParsePath(imageFolder string)string  {
+	if strings.Contains(imageFolder, "~") {
+		imageFolder = strings.Replace(imageFolder, "~", GetHomeDir(), -1)
+	}
+	return imageFolder
+}
 
 func GetImageList(imageFolder string, imageFormat string) []string {
 	files, err := ioutil.ReadDir(imageFolder)
@@ -53,6 +61,12 @@ func ReadJsonResultsFile(path string) []map[string]interface{} {
 	err = json.Unmarshal(data, &formatted)
 	check(err)
 	return formatted
+}
+
+func GetHomeDir() string {
+	usr, err := user.Current()
+	check(err)
+	return usr.HomeDir
 }
 
 func MakeFolder(path string) {
